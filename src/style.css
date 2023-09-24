@@ -12,3 +12,121 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+body,
+html {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+:root {
+  --golden-ratio: 1.61803398875;
+  --color-text: black;
+  --color-bg: white;
+  --gutter: 3ch;
+  --leading: 1.5;
+  --spacing-x: var(--gutter);
+  --spacing-y: calc(var(--leading) * var(--golden-ratio) * 1ex);
+  --page-padding-x: clamp(5vw, calc((100vw - 75ch) / 2), 38.2vw);
+  --border-width: 0.1em;
+  --transition: 250ms ease-out;
+}
+.dialog {
+  --animation-in-settings: 500ms cubic-bezier(0.25, 0, 0.3, 1) normal;
+  --animation-out-settings: 500ms cubic-bezier(0.5, -0.5, 0.1, 1.5) normal;
+}
+.dialog[open] {
+  -webkit-animation: slidein var(--animation-in-settings);
+  animation: slidein var(--animation-in-settings);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] {
+    -webkit-animation: fadein var(--animation-out-settings);
+    animation: fadein var(--animation-out-settings);
+  }
+}
+.dialog.is-hidden {
+  -webkit-animation: minimize var(--animation-out-settings);
+  animation: minimize var(--animation-out-settings);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog.is-hidden {
+    -webkit-animation: fadeout var(--animation-out-settings);
+    animation: fadeout var(--animation-out-settings);
+  }
+}
+
+.dialog[open]::-webkit-backdrop {
+  -webkit-animation: fadein var(--animation-in-settings);
+  animation: fadein var(--animation-in-settings);
+}
+.dialog[open]::backdrop {
+  -webkit-animation: fadein var(--animation-in-settings);
+  animation: fadein var(--animation-in-settings);
+}
+.dialog.is-hidden::-webkit-backdrop {
+  -webkit-animation: fadeout var(--animation-out-settings);
+  animation: fadeout var(--animation-out-settings);
+}
+.dialog.is-hidden::backdrop {
+  -webkit-animation: fadeout var(--animation-out-settings);
+  animation: fadeout var(--animation-out-settings);
+}
+
+@-webkit-keyframes slidein {
+  from {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slidein {
+  from {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-webkit-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeout {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fadeout {
+  to {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes minimize {
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+@keyframes minimize {
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}

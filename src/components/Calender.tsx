@@ -23,9 +23,11 @@ type Event = {
 
 type ItemProps = {
   date: number;
+  month?: number;
+  year?: number;
   background?: string;
   textColor?: string;
-  eventDetails?: Event;
+  eventDetails?: Event[];
 };
 const Calender = (props: CalenderProps) => {
   const [calenderList, setCalenderList] = useState<ItemProps[]>([]);
@@ -35,39 +37,45 @@ const Calender = (props: CalenderProps) => {
     const year = date.getFullYear();
     const month = date.getMonth();
 
-    const lastMonthdates = new Date(year, month, 1).getDay();
-    const lastdateOfCurrentMonth = new Date(year, month + 1, 0).getDate();
-    const dayend = new Date(year, month, lastdateOfCurrentMonth).getDay();
-    const previousMonthlastdate = new Date(year, month, 0).getDate();
+    const lastMonthdates = new Date(year, month, 1);
+    const lastdateOfCurrentMonth = new Date(year, month + 1, 0);
+    const dayend = new Date(year, month, lastdateOfCurrentMonth.getDate());
+    const previousMonthlastdate = new Date(year, month, 0);
     const isToday =
       month === new Date().getMonth() &&
       year === new Date().getFullYear() &&
       date.getDate();
 
     const dateArray: ItemProps[] = produce([], (state) => {
-      for (let i = lastMonthdates; i > 0; i--) {
+      for (let i = lastMonthdates.getDay(); i > 0; i--) {
         const item: ItemProps = {
-          date: previousMonthlastdate - i + 1,
+          date: previousMonthlastdate.getDate() - i + 1,
+          month: previousMonthlastdate.getMonth(),
+          year: previousMonthlastdate.getFullYear(),
           background: props?.background,
           textColor: props?.textColor,
-          eventDetails: props?.eventDetails,
+          eventDetails: [props?.eventDetails],
         };
         state.push(item);
       }
-      for (let i = 1; i <= lastdateOfCurrentMonth; i++) {
+      for (let i = 1; i <= lastdateOfCurrentMonth.getDate(); i++) {
         // Check if the current date is today
 
         const item: ItemProps = {
           date: i,
+          month: lastdateOfCurrentMonth.getMonth(),
+          year: lastdateOfCurrentMonth.getFullYear(),
           textColor: i === isToday ? props?.currentDateColor : props.textColor,
           background:
             i === isToday ? props?.currentDateBackground : props.background,
         };
         state.push(item);
       }
-      for (let i = dayend; i < 6; i++) {
+      for (let i = dayend.getDay(); i < 6; i++) {
         const item: ItemProps = {
-          date: i - dayend + 1,
+          date: i - dayend.getDay() + 1,
+          month: dayend.getMonth(),
+          year: dayend.getFullYear(),
           textColor: props.currentDateColor
             ? props.currentDateBackground
             : "#311B92",
@@ -78,6 +86,7 @@ const Calender = (props: CalenderProps) => {
         state.push();
       }
     });
+    console.log(dateArray);
     setCalenderList(dateArray);
     // // Loop to add the first dates of the next month
   };
@@ -113,10 +122,8 @@ const Calender = (props: CalenderProps) => {
           >
             <p style={{ fontSize: "1rem" }}>{item.date}</p>
           </button>
-          {new Date().getMonth() + 1 ===
-            props.eventDetails.startDate.getMonth() + 1 &&
-            props.eventDetails.startDate.getFullYear() ===
-              new Date().getFullYear() &&
+          {item.month === props.eventDetails.startDate.getMonth() &&
+            props.eventDetails.startDate.getFullYear() === item.year &&
             item.date >= props.eventDetails.startDate.getDate() &&
             item.date <= props.eventDetails.endDate.getDate() && (
               <div
